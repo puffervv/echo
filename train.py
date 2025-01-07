@@ -6,11 +6,15 @@
 import tensorflow as tf
 import numpy as np
 import os
+import time
 from tensorflow import keras, lite
 import matplotlib.pyplot as plt
 from keras.preprocessing.image import ImageDataGenerator
 
-CLASS_NUM = 3
+# 获取当前时间戳
+timestamp = str(int(time.time()))
+
+CLASS_NUM = 4
 INPUT_SIZE = 96 #image size is 96 * 96 * 3
 
 train_datagen_augment = ImageDataGenerator(
@@ -28,15 +32,15 @@ train_datagen_noaugment = ImageDataGenerator(rescale=1/255.0)
 
 test_datagen = ImageDataGenerator(rescale=1/255.0)
 
-training_set = train_datagen_augment.flow_from_directory('image_split/Number_split/train',
+training_set = train_datagen_augment.flow_from_directory('image_split/train',
                                                         target_size = (INPUT_SIZE, INPUT_SIZE),
                                                         batch_size = 64)
 
-training_set_fine = train_datagen_noaugment.flow_from_directory('image_split/Number_split/train',
+training_set_fine = train_datagen_noaugment.flow_from_directory('image_split/train',
                                                                 target_size = (INPUT_SIZE, INPUT_SIZE),
                                                                 batch_size = 64)
 
-test_set = test_datagen.flow_from_directory('image_split/Number_split/test',
+test_set = test_datagen.flow_from_directory('image_split/test',
                                             target_size = (INPUT_SIZE, INPUT_SIZE),
                                             batch_size = 64)
 
@@ -127,7 +131,8 @@ plt.xlabel('epoch')
 
 # 保存训练曲线图
 result_dir = "result/"
-result_img_path = os.path.join(result_dir, 'training_map.png')
+result_img_name = 'training_map'+timestamp+'.png'
+result_img_path = os.path.join(result_dir, result_img_name)
 plt.savefig(result_img_path)
 
 # 显示
@@ -138,7 +143,7 @@ loss, accuracy = model.evaluate(test_set)
 print('Test accuracy :', accuracy)
 print('Test loss :', loss)
 
-quant_set = test_datagen.flow_from_directory('image_split/Number_split/test',
+quant_set = test_datagen.flow_from_directory('image_split/test',
                         target_size = (INPUT_SIZE, INPUT_SIZE),
                         batch_size = 1)
 def representative_dataset():
@@ -158,6 +163,6 @@ tflite_quant_model = converter.convert()
 # Save the model.
 #model.save("trained.h5")
 model_dir = './model'
-tflite_model_path = os.path.join(model_dir, 'trained_Number_demo2.tflite')# tensorflow_lite
+tflite_model_path = os.path.join(model_dir, 'trained_Number_demo1.tflite')# tensorflow_lite
 with open(tflite_model_path, 'wb') as f:
   f.write(tflite_quant_model)

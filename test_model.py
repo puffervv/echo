@@ -4,15 +4,19 @@
 # @Software: VScode
 # @Brief   : 测试tflite模型的程序，混淆矩阵会保存在result目录下
 import os
+import time
 import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
 import cv2
 import matplotlib.pyplot as plt
 
+# 获取当前时间戳
+timestamp = str(int(time.time()))
+
 # 加载TFLite模型
 #model_path = './model/trained_Number.tflite'
-model_path = './model/trained_Number.tflite'
+model_path = './model/trained_Number_demo1.tflite'
 interpreter = tf.lite.Interpreter(model_path=model_path)
 interpreter.allocate_tensors()
 
@@ -22,11 +26,11 @@ output_details = interpreter.get_output_details()
 
 # 测试集目录
 #test_dir = 'E:/car/material_tf/image_split/Number_split/test'
-test_dir = 'E:/car/material_tf/image_split/Number_split/test'
+test_dir = 'E:/echo/image_split/test'
 class_names = sorted(os.listdir(test_dir))
 
 # 创建result目录
-result_dir = './result1'
+result_dir = './result'
 os.makedirs(result_dir, exist_ok=True)
 
 # 初始化混淆矩阵
@@ -84,7 +88,8 @@ plt.tight_layout()
 plt.ylabel('Actual')
 plt.xlabel('Predicted')
 # 保存热力图到result文件夹
-result_img_path = os.path.join(result_dir, 'confusion_matrix_Letter1.png')
+img_name = 'confusion_matrix'+timestamp+'.png'
+result_img_path = os.path.join(result_dir, img_name)
 plt.savefig(result_img_path)
 
 # 显示热力图

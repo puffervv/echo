@@ -3,14 +3,17 @@ from tqdm import tqdm
 import cv2
 import random
 import os
+import time
 
 # 指定路径
-path = 'E:/car/material'
+path = 'E:/bishe/archive/train'
 # 指定新文件的路径
-new_path = 'E:/car/material_tf/image/Material_tf'
+new_path = 'E:/echo/image/train'
 # 指定背景图路径
 background_path = 'E:/car/opwnmv/174.png'
 
+# 获取当前时间戳
+timestamp = str(int(time.time()))
 
 # 遍历path目录下的每个文件夹
 for foldername in tqdm(os.listdir(path), desc='Processing folders'):
@@ -21,18 +24,20 @@ for foldername in tqdm(os.listdir(path), desc='Processing folders'):
         if not os.path.exists(new_folder):
             os.makedirs(new_folder)
         
-        # 遍历文件夹中的所有jpg文件
-        for filename in tqdm(os.listdir(folder_path), desc=f'Processing images in {foldername}'):
-            if filename.endswith('.jpg'):
+        # 遍历文件夹中的所有png文件
+        for filename in tqdm(os.listdir(folder_path), desc=f'Processing images in {foldername}',leave=False,position=1):
+            if filename.endswith('.png'):
                 # 获取文件完整路径
                 image_path = os.path.join(folder_path, filename)
-                
+
                 # 读取图像
                 img = cv2.imread(image_path)
-                
+                if img is None:
+                    print(f"无法读取图像: {image_path}")
+                    continue  # 跳过无法读取的图像
                 # 定义新的文件名和路径
                 base, extension = os.path.splitext(filename)  # 分离文件名和扩展名
-                new_filename = base + '_I' + extension  # 新文件名
+                new_filename = base + timestamp + extension  # 新文件名
                 new_image_path = os.path.join(new_folder, new_filename)
                 
                 # 修改分辨率并保存

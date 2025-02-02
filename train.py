@@ -32,15 +32,15 @@ train_datagen_noaugment = ImageDataGenerator(rescale=1/255.0)
 
 test_datagen = ImageDataGenerator(rescale=1/255.0)
 
-training_set = train_datagen_augment.flow_from_directory('image_split/train',
+training_set = train_datagen_augment.flow_from_directory('/workspace/echo/image_split/train',
                                                         target_size = (INPUT_SIZE, INPUT_SIZE),
                                                         batch_size = 64)
 
-training_set_fine = train_datagen_noaugment.flow_from_directory('image_split/train',
+training_set_fine = train_datagen_noaugment.flow_from_directory('/workspace/echo/image_split/train',
                                                                 target_size = (INPUT_SIZE, INPUT_SIZE),
                                                                 batch_size = 64)
 
-test_set = test_datagen.flow_from_directory('image_split/test',
+test_set = test_datagen.flow_from_directory('/workspace/echo/image_split/test',
                                             target_size = (INPUT_SIZE, INPUT_SIZE),
                                             batch_size = 64)
 
@@ -72,7 +72,7 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rat
               metrics=['accuracy'])
 model.summary()
 
-initial_epochs = 8 # 第一次训练
+initial_epochs = 15 # 第一次训练
 
 history = model.fit(training_set_fine,
                     epochs=initial_epochs,
@@ -85,7 +85,7 @@ loss0, accuracy0 = model.evaluate(test_set)
 print('Test accuracy0 :', accuracy0) # 无数据增强结果
 print('Test loss0 :', loss0)
 
-fine_tune_epochs = 8 # 继续训练
+fine_tune_epochs = 25 # 继续训练
 total_epochs =  initial_epochs + fine_tune_epochs
 
 history_fine = model.fit(training_set,
@@ -130,7 +130,7 @@ plt.title('Training and Validation Loss')
 plt.xlabel('epoch')
 
 # 保存训练曲线图
-result_dir = "result/"
+result_dir = "/workspace/echo/result/"
 result_img_name = 'training_map'+timestamp+'.png'
 result_img_path = os.path.join(result_dir, result_img_name)
 plt.savefig(result_img_path)
@@ -143,7 +143,7 @@ loss, accuracy = model.evaluate(test_set)
 print('Test accuracy :', accuracy)
 print('Test loss :', loss)
 
-quant_set = test_datagen.flow_from_directory('image_split/test',
+quant_set = test_datagen.flow_from_directory('/workspace/echo/image_split/test',
                         target_size = (INPUT_SIZE, INPUT_SIZE),
                         batch_size = 1)
 def representative_dataset():
@@ -162,7 +162,7 @@ tflite_quant_model = converter.convert()
 
 # Save the model.
 #model.save("trained.h5")
-model_dir = './model'
+model_dir = '/workspace/echo/model'
 tflite_model_path = os.path.join(model_dir, 'trained_Number_demo1.tflite')# tensorflow_lite
 with open(tflite_model_path, 'wb') as f:
   f.write(tflite_quant_model)

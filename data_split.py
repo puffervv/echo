@@ -75,6 +75,6 @@ def data_set_split(src_data_folder, target_data_folder, train_scale=0.8, val_sca
 
 
 if __name__ == '__main__':
-    src_data_folder = "E:/echo/image/archive"   # todo 修改你的原始数据集路径
-    target_data_folder = "E:/echo/image_split"  # todo 修改为你要存放的路径
+    src_data_folder = "/workspace/echo/image"   # todo 修改你的原始数据集路径
+    target_data_folder = "/workspace/echo/image_split"  # todo 修改为你要存放的路径
     data_set_split(src_data_folder, target_data_folder)

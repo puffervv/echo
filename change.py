@@ -6,11 +6,11 @@ import os
 import time
 
 # 指定路径
-path = 'E:/bishe/archive/train'
+path = '/workspace/echo/archive'
 # 指定新文件的路径
-new_path = 'E:/echo/image/train'
+new_path = '/workspace/echo/image'
 # 指定背景图路径
-background_path = 'E:/car/opwnmv/174.png'
+background_path = '/workspace/echo/174.png'
 
 # 获取当前时间戳
 timestamp = str(int(time.time()))

@@ -16,7 +16,7 @@ timestamp = str(int(time.time()))
 
 # 加载TFLite模型
 #model_path = './model/trained_Number.tflite'
-model_path = './model/trained_Number_demo1.tflite'
+model_path = '/workspace/echo/model/trained_Number_demo1.tflite'
 interpreter = tf.lite.Interpreter(model_path=model_path)
 interpreter.allocate_tensors()
 
@@ -26,11 +26,11 @@ output_details = interpreter.get_output_details()
 
 # 测试集目录
 #test_dir = 'E:/car/material_tf/image_split/Number_split/test'
-test_dir = 'E:/echo/image_split/test'
+test_dir = '/workspace/echo/image_split/test'
 class_names = sorted(os.listdir(test_dir))
 
 # 创建result目录
-result_dir = './result'
+result_dir = '/workspace/echo/result'
 os.makedirs(result_dir, exist_ok=True)
 
 # 初始化混淆矩阵

@@ -20,10 +20,10 @@ INPUT_SIZE = 96 #image size is 96 * 96 * 3
 train_datagen_augment = ImageDataGenerator(
                     rescale=1/255.0,
                     rotation_range=0.2,        # 随机旋转的角度范围
-                    width_shift_range=0.2,     # 水平平移的范围（相对于总宽度的比例）
-                    height_shift_range=0.2,    # 垂直平移的范围（相对于总高度的比例）
-                    shear_range=0.1,           # 剪切变换的范围
-                    zoom_range=0.1,            # 随机缩放的范围
+                    width_shift_range=0.1,     # 水平平移的范围（相对于总宽度的比例）
+                    height_shift_range=0.1,    # 垂直平移的范围（相对于总高度的比例）
+                    shear_range=0.2,           # 剪切变换的范围
+                    zoom_range=0.2,            # 随机缩放的范围
                     horizontal_flip=False,      # 随机水平翻转
                     fill_mode='nearest'         # 填充新创建像素的方法)
                     )       
@@ -60,7 +60,7 @@ model = keras.models.Model(inputs=base.input, outputs=predictions)
 
 
 tensorboard_callback = tf.keras.callbacks.TensorBoard(
-    log_dir='logs',  # 日志目录，TensorBoard将会在这里记录日志
+    log_dir='/workspace/echo/logs',  # 日志目录，TensorBoard将会在这里记录日志
     histogram_freq=1,  # 记录直方图的频率
     write_graph=True,  # 是否记录计算图
     write_images=True    # 是否记录训练过程中的图片
@@ -72,7 +72,7 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rat
               metrics=['accuracy'])
 model.summary()
 
-initial_epochs = 15 # 第一次训练
+initial_epochs = 10 # 第一次训练
 
 history = model.fit(training_set_fine,
                     epochs=initial_epochs,
@@ -85,7 +85,7 @@ loss0, accuracy0 = model.evaluate(test_set)
 print('Test accuracy0 :', accuracy0) # 无数据增强结果
 print('Test loss0 :', loss0)
 
-fine_tune_epochs = 25 # 继续训练
+fine_tune_epochs = 15 # 继续训练
 total_epochs =  initial_epochs + fine_tune_epochs
 
 history_fine = model.fit(training_set,

@@ -16,13 +16,18 @@ timestamp = str(int(time.time()))
 
 # 加载TFLite模型
 #model_path = './model/trained_Number.tflite'
-model_path = '/workspace/echo/model/trained_Number_demo1.tflite'
+model_path = '/workspace/echo/model/trained_material_demo3.tflite'
 interpreter = tf.lite.Interpreter(model_path=model_path)
 interpreter.allocate_tensors()
 
 # 获取输入和输出张量
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
+
+# 提取量化参数
+input_scale = input_details[0]['quantization'][0]
+input_zero_point = input_details[0]['quantization'][1]
+print(f"Model input requires: dtype={input_details[0]['dtype']}, scale={input_scale}, zero_point={input_zero_point}")
 
 # 测试集目录
 #test_dir = 'E:/car/material_tf/image_split/Number_split/test'
@@ -40,14 +45,19 @@ confusion_matrix = np.zeros((num_classes, num_classes))
 # 遍历测试集,计算准确率和混淆矩阵
 correct = 0
 total = 0
-confusion_matrix = np.zeros((num_classes, num_classes))
+# confusion_matrix = np.zeros((num_classes, num_classes))
 for class_name in class_names:
     class_dir = os.path.join(test_dir, class_name)
     for img_file in tqdm(os.listdir(class_dir),desc=f'img_file in {class_dir}'):
         img_path = os.path.join(class_dir, img_file)
         img = cv2.imread(img_path)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 转换颜色通道为RGB
         img = cv2.resize(img, (96, 96))
-        img = np.expand_dims(img, axis=0).astype(np.int8)
+        img = img.astype(np.float32)                # 转 float32
+        img = img / input_scale + input_zero_point  # 应用反量化公式
+        img = np.clip(img, -128, 127).astype(np.int8)  # 限制在 int8 范围
+        
+        img = np.expand_dims(img, axis=0)           # 添加 batch 维度
 
         # 获取预测结果
         interpreter.set_tensor(input_details[0]['index'], img)

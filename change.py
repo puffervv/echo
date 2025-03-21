@@ -42,33 +42,33 @@ for num in range(1):
                     new_image_path = os.path.join(new_folder, new_filename)
                     
                     # 修改分辨率并保存
-                    image = cv2.resize(img, (464, 464))
-                    # 读取背景图
-                    background = cv2.imread(background_path)
-                    background = cv2.resize(background,(1000,1000))
-                    # 背景图尺寸
-                    background_height, background_width = background.shape[:2]
-                    # 贴图尺寸
-                    patch_height, patch_width = image.shape[:2]
+                    image = cv2.resize(img, (224, 224))
+                    # # 读取背景图
+                    # background = cv2.imread(background_path)
+                    # background = cv2.resize(background,(1000,1000))
+                    # # 背景图尺寸
+                    # background_height, background_width = background.shape[:2]
+                    # # 贴图尺寸
+                    # patch_height, patch_width = image.shape[:2]
 
-                    # 计算居中位置的坐标
-                    start_x = (background_width - patch_width) // 2
-                    start_y = (background_height - patch_height) // 2
+                    # # 计算居中位置的坐标
+                    # start_x = (background_width - patch_width) // 2
+                    # start_y = (background_height - patch_height) // 2
 
 
-                    # 确保起始坐标不会超出背景图的边界
-                    start_x = max(0, start_x)
-                    start_y = max(0, start_y)
+                    # # 确保起始坐标不会超出背景图的边界
+                    # start_x = max(0, start_x)
+                    # start_y = max(0, start_y)
 
-                    # 计算粘贴区域的尺寸，确保不会超出背景图的边界
-                    end_x = min(start_x + patch_width, background_width)
-                    end_y = min(start_y + patch_height, background_height)
+                    # # 计算粘贴区域的尺寸，确保不会超出背景图的边界
+                    # end_x = min(start_x + patch_width, background_width)
+                    # end_y = min(start_y + patch_height, background_height)
 
-                    background[start_y:end_y, start_x:end_x] = image[0:end_y-start_y, 0:end_x-start_x]
+                    # background[start_y:end_y, start_x:end_x] = image[0:end_y-start_y, 0:end_x-start_x]
 
 
                     # 修改颜色空间为HSV
-                    img_hsv = cv2.cvtColor(background, cv2.COLOR_BGR2HSV)
+                    img_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
                     turn_hsv = img_hsv.copy()
                     # 调整HSV三通道，H-色调[0,180]，S-饱和度[0,255]，V-明暗度[0,255]
                     turn_hsv[:,:,0]=(turn_hsv[:,:,0]+random.uniform(0.0,1.0))
@@ -88,18 +88,18 @@ for num in range(1):
                     img_change = cv2.getRotationMatrix2D((width / 2, height / 2), theta, 1)
                     img = cv2.warpAffine(turn_img, img_change, (width, height))
 
-                    while(theta > 90):
-                        theta = theta-90
-                    # 转弧度
-                    theta_hu =  np.radians(theta)
-                    # 计算外接矩形边长
-                    new_d = int(patch_height*np.cos(theta_hu)+patch_height*np.sin(theta_hu))
-                    # 计算新的坐标起始点
-                    start_x = (background_width - new_d) // 2
-                    start_y = (background_height - new_d) // 2
-                    # 截图背景中外接矩形大小的区域为新的图片
-                    background = img[start_x:start_x+new_d,start_y:start_y+new_d]
+                    # while(theta > 90):
+                    #     theta = theta-90
+                    # # 转弧度
+                    # theta_hu =  np.radians(theta)
+                    # # 计算外接矩形边长
+                    # new_d = int(patch_height*np.cos(theta_hu)+patch_height*np.sin(theta_hu))
+                    # # 计算新的坐标起始点
+                    # start_x = (background_width - new_d) // 2
+                    # start_y = (background_height - new_d) // 2
+                    # # 截图背景中外接矩形大小的区域为新的图片
+                    # background = img[start_x:start_x+new_d,start_y:start_y+new_d]
                     
                     # 保存旋转和调整亮度后的图片
-                    cv2.imwrite(new_image_path, background)
+                    cv2.imwrite(new_image_path, img)
 
